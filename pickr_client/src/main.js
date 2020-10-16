@@ -1,5 +1,15 @@
-import { createApp } from 'vue'
+import Vue from 'vue'
+import HeyUI from "heyui"
 import App from './App.vue'
 import router from './router'
+import "heyui/themes/index.less";
+import en from 'heyui/dist/locale/en-US';
 
-createApp(App).use(router).mount('#app')
+Vue.config.productionTip = false
+
+Vue.use(HeyUI, {locale: en});
+
+new Vue({
+  router,
+  render: h => h(App)
+}).$mount('#app')
