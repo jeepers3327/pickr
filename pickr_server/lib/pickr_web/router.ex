@@ -23,6 +23,8 @@ defmodule PickrWeb.Router do
   scope "/api", PickrWeb do
     pipe_through :api
     resources "/polls", PollController, except: [:new, :edit]
+    get "/polls/:id/results", PollController, :get_poll_result
+    post "/polls/:id/vote", PollController, :cast_vote
   end
 
   # Enables LiveDashboard only for development

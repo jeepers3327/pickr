@@ -6,7 +6,7 @@ defmodule Pickr.Polls do
   import Ecto.Query, warn: false
   alias Pickr.Repo
 
-  alias Pickr.Polls.Poll
+  alias Pickr.Polls.{Poll, Vote}
 
   @doc """
   Returns the list of polls.
@@ -35,7 +35,7 @@ defmodule Pickr.Polls do
       ** (Ecto.NoResultsError)
 
   """
-  def get_poll!(id), do: Repo.get!(Poll, id)
+  def get_poll!(id), do: Repo.get!(Poll, id) |> Repo.preload(:options)
 
   @doc """
   Creates a poll.
@@ -100,5 +100,22 @@ defmodule Pickr.Polls do
   """
   def change_poll(%Poll{} = poll, attrs \\ %{}) do
     Poll.changeset(poll, attrs)
+  end
+
+  def cast_vote(attrs \\ %{}) do
+    %Vote{}
+      |> Vote.changeset(attrs)
+      |> Repo.insert()
+  end
+
+  def get_poll_results(id) do
+    poll = Repo.get(Poll, id) |> Repo.preload(:options)
+    get_total_votes = Vote |> group_by([v], v.option_id) |> select([v], %{option_id: v.option_id, votes: count(v.id)})  |> Repo.all
+    options =
+      for %{id: id} = x <- poll.options, %{option_id: o_id} = y <- get_total_votes, id == o_id do
+        %{id: x.id, value: x.value, votes: y.votes}
+      end
+
+    %{id: poll.id, question: poll.question, options: options}
   end
 end

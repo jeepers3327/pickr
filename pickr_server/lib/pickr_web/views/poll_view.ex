@@ -14,4 +14,19 @@ defmodule PickrWeb.PollView do
     %{id: poll.id,
       question: poll.question}
   end
+
+  def render("poll_result.json", %{poll: poll}) do
+    %{id: poll.id,
+      question: poll.question,
+      options: render_many(poll.options, PollView, "option.json", as: :option)
+    }
+  end
+
+  def render("option.json", %{option: option}) do
+    %{
+      id: option.id,
+      value: option.value,
+      votes: option.votes
+    }
+  end
 end

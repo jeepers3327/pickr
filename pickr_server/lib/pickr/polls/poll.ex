@@ -5,6 +5,7 @@ defmodule Pickr.Polls.Poll do
   schema "polls" do
     field :question, :string
 
+    has_many :options, Pickr.Polls.Option
     timestamps()
   end
 
@@ -12,6 +13,7 @@ defmodule Pickr.Polls.Poll do
   def changeset(poll, attrs) do
     poll
     |> cast(attrs, [:question])
+    |> cast_assoc(:options, required: true)
     |> validate_required([:question])
   end
 end

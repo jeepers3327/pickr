@@ -40,4 +40,15 @@ defmodule PickrWeb.PollController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def cast_vote(conn, %{"vote" => vote_params}) do
+    with  {:ok, _vote} <- Polls.cast_vote(vote_params) do
+      send_resp(conn, :no_content, "")
+    end
+  end
+
+  def get_poll_result(conn, %{"id" => id}) do
+    poll = Polls.get_poll_results(id)
+    render(conn, "poll_result.json", poll: poll)
+  end
 end

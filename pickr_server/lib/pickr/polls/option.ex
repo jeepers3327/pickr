@@ -4,7 +4,7 @@ defmodule Pickr.Polls.Option do
 
   schema "options" do
     field :value, :string
-    field :poll_id, :id
+    belongs_to :poll, Pickr.Polls.Poll
 
     timestamps()
   end
