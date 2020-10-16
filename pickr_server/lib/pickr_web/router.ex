@@ -20,9 +20,10 @@ defmodule PickrWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", PickrWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", PickrWeb do
+    pipe_through :api
+    resources "/polls", PollController, except: [:new, :edit]
+  end
 
   # Enables LiveDashboard only for development
   #
