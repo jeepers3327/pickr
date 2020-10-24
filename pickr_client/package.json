@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "heyui": "^1.26.1",
+    "phoenix": "^1.5.6",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0"
   },
@@ -23,6 +24,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
+    "lodash": "^4.17.20",
     "vue-template-compiler": "^2.6.11"
   }
 }
