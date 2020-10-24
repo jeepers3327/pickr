@@ -2,7 +2,7 @@ defmodule PickrWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", PickrWeb.RoomChannel
+  channel "poll:*", PickrWeb.PollChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
