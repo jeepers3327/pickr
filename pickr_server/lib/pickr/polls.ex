@@ -35,7 +35,7 @@ defmodule Pickr.Polls do
       ** (Ecto.NoResultsError)
 
   """
-  def get_poll!(id), do: Repo.get!(Poll, id) |> Repo.preload(:options)
+  def get_poll(id), do: Repo.get(Poll, id) |> Repo.preload(:options)
 
   @doc """
   Creates a poll.
@@ -103,19 +103,79 @@ defmodule Pickr.Polls do
   end
 
   def cast_vote(attrs \\ %{}) do
-    %Vote{}
-      |> Vote.changeset(attrs)
-      |> Repo.insert()
+    result = Repo.transaction(fn ->
+      Enum.map(attrs, fn params ->
+        changeset = Vote.changeset(%Vote{}, params)
+        Repo.insert(changeset)
+      end)
+    end)
+
+    case result do
+      {:ok, list} -> {:ok, list}
+      {:error, :rollback} -> {:error, :bad_request}
+    end
   end
 
   def get_poll_results(id) do
-    poll = Repo.get(Poll, id) |> Repo.preload(:options)
-    get_total_votes = Vote |> group_by([v], v.option_id) |> select([v], %{option_id: v.option_id, votes: count(v.id)})  |> Repo.all
-    options =
-      for %{id: id} = x <- poll.options, %{option_id: o_id} = y <- get_total_votes, id == o_id do
-        %{id: x.id, value: x.value, votes: y.votes}
+    poll = get_poll(id)
+    votes =
+      case get_votes_per_poll(id) do
+        [] -> set_default_votes(poll.options)
+        result -> append_votes_with_defaults(poll.options, result)
       end
 
-    %{id: poll.id, question: poll.question, options: options}
+    total_votes = get_total_votes(votes)
+    options = append_votes_to_options(poll.options, votes, total_votes)
+
+    %{id: poll.id, question: poll.question, options: options, total_votes: total_votes}
   end
+
+  defp convert_to_percentage(vote, _total_vote) when vote == 0, do: 0
+
+  defp convert_to_percentage(vote, total_vote) do
+    vote / total_vote * 100 |> Float.round(1)
+  end
+
+  defp append_votes_to_options(poll_options, result_poll_options, total_votes) do
+    for %{id: id} = x <- poll_options, %{option_id: o_id} = y <- result_poll_options, id == o_id do
+      %{id: x.id, value: x.value, votes: convert_to_percentage(y.votes, total_votes)}
+    end
+  end
+
+  defp get_votes_per_poll(id) do
+    Vote |> where([v], v.poll_id == ^id) |> group_by([v], v.option_id) |> select([v], %{option_id: v.option_id, votes: count(v.id)})  |> Repo.all
+  end
+
+
+  defp get_total_votes(vote_result) do
+    Enum.reduce(vote_result, 0, fn(%{votes: vote}, total_vote) ->
+      total_vote + vote
+    end)
+  end
+
+  defp append_votes_with_defaults(options, result) do
+    options
+      |> set_default_votes()
+      |> remove_options_with_votes(result)
+      |> append_votes_to_default_votes(result)
+  end
+
+  defp set_default_votes(options)  do
+    Enum.map(options, fn option ->
+      %{option_id: option.id, votes: 0}
+    end )
+  end
+
+  defp remove_options_with_votes(options, result) do
+    Enum.reject(options, fn opt ->
+      Enum.any?(result, fn res ->
+        opt.option_id == res.option_id
+      end)
+    end)
+  end
+
+  defp append_votes_to_default_votes(options, result) do
+    options ++ result
+  end
+
 end
