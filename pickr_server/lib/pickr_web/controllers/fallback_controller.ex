@@ -21,4 +21,8 @@ defmodule PickrWeb.FallbackController do
     |> put_view(PickrWeb.ErrorView)
     |> render(:"404")
   end
+
+  def call(conn, {:error, :bad_request}) do
+    send_resp(conn, :bad_request, "An error occured!. Please check the data sent.")
+  end
 end

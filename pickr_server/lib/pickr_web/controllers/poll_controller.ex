@@ -21,12 +21,17 @@ defmodule PickrWeb.PollController do
   end
 
   def show(conn, %{"id" => id}) do
-    poll = Polls.get_poll!(id)
-    render(conn, "show.json", poll: poll)
+    case Polls.get_poll(id) do
+      nil ->
+        {:error, :not_found}
+      poll ->
+        render(conn, "show.json", poll: poll)
+    end
+
   end
 
   def update(conn, %{"id" => id, "poll" => poll_params}) do
-    poll = Polls.get_poll!(id)
+    poll = Polls.get_poll(id)
 
     with {:ok, %Poll{} = poll} <- Polls.update_poll(poll, poll_params) do
       render(conn, "show.json", poll: poll)
@@ -34,7 +39,7 @@ defmodule PickrWeb.PollController do
   end
 
   def delete(conn, %{"id" => id}) do
-    poll = Polls.get_poll!(id)
+    poll = Polls.get_poll(id)
 
     with {:ok, %Poll{}} <- Polls.delete_poll(poll) do
       send_resp(conn, :no_content, "")
