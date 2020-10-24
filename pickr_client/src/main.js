@@ -5,9 +5,13 @@ import router from './router'
 import "heyui/themes/index.less";
 import en from 'heyui/dist/locale/en-US';
 
+import {Socket} from "./channels/index";
+
 Vue.config.productionTip = false
 
 Vue.use(HeyUI, {locale: en});
+
+Socket.connect();
 
 new Vue({
   router,
