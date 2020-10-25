@@ -159,7 +159,6 @@ defmodule Pickr.Polls do
         option -> option
       end
     end)
-
   end
 
   defp set_default_votes(options)  do
