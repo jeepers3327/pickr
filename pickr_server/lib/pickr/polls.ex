@@ -146,7 +146,6 @@ defmodule Pickr.Polls do
     Vote |> where([v], v.poll_id == ^id) |> group_by([v], v.option_id) |> select([v], %{option_id: v.option_id, votes: count(v.id)})  |> Repo.all
   end
 
-
   defp get_total_votes(vote_result) do
     Enum.reduce(vote_result, 0, fn(%{votes: vote}, total_vote) ->
       total_vote + vote
@@ -154,28 +153,19 @@ defmodule Pickr.Polls do
   end
 
   defp append_votes_with_defaults(options, result) do
-    options
-      |> set_default_votes()
-      |> remove_options_with_votes(result)
-      |> append_votes_to_default_votes(result)
+    Enum.map(options, fn %{id: id} ->
+      case Enum.find(result, &(&1.option_id == id)) do
+        nil -> %{option_id: id, votes: 0}
+        option -> option
+      end
+    end)
+
   end
 
   defp set_default_votes(options)  do
     Enum.map(options, fn option ->
       %{option_id: option.id, votes: 0}
     end )
-  end
-
-  defp remove_options_with_votes(options, result) do
-    Enum.reject(options, fn opt ->
-      Enum.any?(result, fn res ->
-        opt.option_id == res.option_id
-      end)
-    end)
-  end
-
-  defp append_votes_to_default_votes(options, result) do
-    options ++ result
   end
 
 end
