@@ -102,17 +102,23 @@ defmodule Pickr.Polls do
     Poll.changeset(poll, attrs)
   end
 
-  def cast_vote(attrs \\ %{}) do
-    result = Repo.transaction(fn ->
-      Enum.map(attrs, fn params ->
-        changeset = Vote.changeset(%Vote{}, params)
-        Repo.insert(changeset)
-      end)
-    end)
+  def cast_vote(attrs) do
+    vote = Vote.cast_vote_changeset(%Vote{}, attrs)
+    case vote.valid? do
+      true ->
+            result = Repo.transaction(fn ->
+                      Enum.map(attrs["options"], fn params ->
+                        vote_params = Map.put_new(params, "ip", attrs["ip"])
+                        changeset = Vote.changeset(%Vote{}, vote_params)
+                        Repo.insert(changeset)
+                      end)
+                    end)
 
-    case result do
-      {:ok, list} -> {:ok, list}
-      {:error, :rollback} -> {:error, :bad_request}
+            case result do
+              {:ok, list} -> {:ok, list}
+              {:error, _failed_operation, _failed_value, _changes_so_far} -> {:error, :bad_request}
+            end
+      false -> {:error, vote}
     end
   end
 
@@ -165,6 +171,14 @@ defmodule Pickr.Polls do
     Enum.map(options, fn option ->
       %{option_id: option.id, votes: 0}
     end )
+  end
+
+  def has_vote?(id, ip) do
+    query = Vote |> where([v], v.poll_id == ^id) |> where([v], v.ip == ^ip) |> select([v], count(v))
+    case Repo.all(query) do
+      [0] -> true
+      _ -> false
+    end
   end
 
 end
