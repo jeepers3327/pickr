@@ -56,4 +56,12 @@ defmodule PickrWeb.PollController do
     poll = Polls.get_poll_results(id)
     render(conn, "poll_result.json", poll: poll)
   end
+
+  def get_vote_exist(%Plug.Conn{params: params} = conn, _params) do
+
+    vote_exist = Polls.check_vote_exist(params["id"], params["ip"])
+    IO.inspect(vote_exist)
+    render(conn, "vote_exist.json", has_vote: vote_exist)
+
+  end
 end

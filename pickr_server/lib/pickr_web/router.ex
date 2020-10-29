@@ -25,6 +25,7 @@ defmodule PickrWeb.Router do
     resources "/polls", PollController, except: [:new, :edit]
     get "/polls/:id/results", PollController, :get_poll_result
     post "/polls/:id/vote", PollController, :cast_vote
+    get "/polls/:id/vote_check", PollController, :get_vote_exist
   end
 
   # Enables LiveDashboard only for development

@@ -42,8 +42,8 @@ defmodule Pickr.Polls.Vote do
 
   defp vote_exist_check(%Ecto.Changeset{changes: %{allow_single_vote_only: single_vote, ip: ip, poll_id: id}} = changeset) when single_vote == true do
     case Pickr.Polls.has_vote?(id, ip) do
-      false -> add_error(changeset, :allow_single_vote_only, "You already voted in this poll!")
-      true -> changeset
+      true -> add_error(changeset, :allow_single_vote_only, "You already voted in this poll!")
+      false -> changeset
     end
   end
 

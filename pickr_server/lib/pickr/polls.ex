@@ -173,11 +173,26 @@ defmodule Pickr.Polls do
     end )
   end
 
+  def check_vote_exist(id, ip) do
+    poll = Repo.get(Poll, id)
+    case poll do
+      nil -> {:error, :not_found}
+      poll ->
+        if poll.allow_single_vote_only do
+          case has_vote?(id, ip) do
+            true -> true
+            false -> false
+          end
+        end
+    end
+  end
+
+
   def has_vote?(id, ip) do
     query = Vote |> where([v], v.poll_id == ^id) |> where([v], v.ip == ^ip) |> select([v], count(v))
     case Repo.all(query) do
-      [0] -> true
-      _ -> false
+      [0] -> false
+      _ -> true
     end
   end
 
