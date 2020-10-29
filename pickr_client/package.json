@@ -11,6 +11,7 @@
     "core-js": "^3.6.5",
     "heyui": "^1.26.1",
     "phoenix": "^1.5.6",
+    "tailwindcss": "^1.9.6",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0"
   },

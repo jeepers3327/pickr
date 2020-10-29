@@ -6,6 +6,7 @@ import "heyui/themes/index.less";
 import en from 'heyui/dist/locale/en-US';
 
 import {Socket} from "./channels/index";
+import "./assets/app.css";
 
 Vue.config.productionTip = false
 
