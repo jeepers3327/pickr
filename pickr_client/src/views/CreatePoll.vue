@@ -1,5 +1,7 @@
 <template>
-  <div v-width="450">
+<div v-width="500" class="mx-auto  flex justify-center items-center">
+<div class="bg-white shadow py-10 pr-15 sm:rounded-lg">
+    
     <Form
       ref="form"
       :validOnChange="validOnChange"
@@ -39,7 +41,9 @@
         <Button color="primary" :loading="isLoading" @click="submit">Create your poll</Button>&nbsp;&nbsp;&nbsp;
       </FormItem>
     </Form>
-  </div>
+</div>
+</div>
+
 </template>
 <script>
 import { createPoll } from '../services/poll';
@@ -128,7 +132,7 @@ export default {
   resize: none;
 }
 
-#poll_question::placeholder {
+#poll_question, #poll_question::placeholder {
   font-size: 1.2rem;
 }
 
@@ -143,6 +147,10 @@ export default {
 
 .submit {
   justify-content: flex-end;
+}
+
+.pr-15 {
+  padding-right: 5rem;
 }
 
 </style>

@@ -1,10 +1,16 @@
 <template>
-  <div>
-    <h1>{{ poll.question }}</h1>
-    <div v-for="(item, index) of poll.options" :key="index">
-      <Checkbox v-model="selected_options" :value="item.id">{{
-        item.value
+  <div class="flex flex-col items-center w-full pt-12">
+        <h1 class="text-5xl">{{ poll.question }}</h1>
+        <div class=" flex flex-col">
+ 
+
+    <div v-for="(item, index) of poll.options" :key="index" >
+        <div class="flex flex-row rounded-b lg:rounded-b-none lg:rounded-r p-4  justify-between leading-normal card mb-5" @click="selectChoice(item.id)" >
+    <Checkbox class="mr-5" v-model="selected_options" :value="item.id">{{
+        item.value 
       }}</Checkbox>
+  </div>
+      
     </div>
  
     <div v-if="isLoading">
@@ -15,9 +21,14 @@
          <div v-else-if="already_voted">
             <h2>You already voted in this poll!</h2>
          </div>
-        <Button v-else @click="castVote">Vote</Button>
-        <router-link :to="{name: 'Result', params: {id: poll.id}}">View result </router-link>
+        <div  v-width="250" v-else>
+          <Button color="primary" class="font-bold" size="l" v-width="100"  @click="castVote">Vote</Button>
+        </div>
+        <div class="pt-5">
+           <router-link :to="{name: 'Result', params: {id: poll.id}}">View result </router-link>
+        </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -42,6 +53,7 @@ export default {
       .then(({ data }) => {
         next((vm) => {
           vm.poll = data;
+          vm.check_poll_expiry(data.end_date);
         });
       })
       .catch(() => {
@@ -115,7 +127,22 @@ export default {
     check_poll_expiry(end_date) {
       const poll_end_date = new Date(end_date);
       const today = new Date();
-      this.poll_expired = today > poll_end_date
+      const day = today.getDate() <= 9 ? '0' + today.getDate() : today.getDate()
+      const month = today.getMonth() + 1;
+      const year = today.getFullYear();
+      const formatted_date = year + "-" + month + "-" + day;
+      const today_date = new Date(formatted_date)
+      this.poll_expired = today_date > poll_end_date
+    },
+
+    selectChoice(choiceId) {
+      console.log(choiceId);
+      if (this.selected_options.includes(choiceId)) {
+        const updated_selected_options = this.selected_options.filter(option => option !== choiceId);
+        this.selected_options = updated_selected_options;
+      } else {
+        this.selected_options.push(choiceId)
+      }
     }
   
     
@@ -123,4 +150,19 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+
+.card{
+    background: #fff;
+    box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+      transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+  padding: 14px 80px 18px 36px;
+  cursor: pointer;
+  min-width: 20rem;
+}
+
+.card:hover{
+     transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+</style>

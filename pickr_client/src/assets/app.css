@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #f1f1f1bf;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+
+.content {
+  flex: 1 0 auto;
+  padding: 1rem ;
+  display: flex;
+}
+.footer {
+  flex-shrink: 0;
+  padding: 2rem;
+  align-items: center;
+  justify-content: center;
+  background: #f1f1f1bf;
+}
