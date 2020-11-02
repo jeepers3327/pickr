@@ -6,9 +6,9 @@ defmodule Pickr.Polls.Poll do
     field :question, :string
     has_many :options, Pickr.Polls.Option
 
-    field :allow_multiple_choice, :boolean
-    field :allow_single_vote_only, :boolean
-    field :end_date, :date
+    field :allow_multiple_choice, :boolean, default: false
+    field :allow_single_vote_only, :boolean, default: false
+    field :end_date, :date, default: Date.utc_today()
     timestamps()
   end
 

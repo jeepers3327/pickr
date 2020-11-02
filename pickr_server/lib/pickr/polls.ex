@@ -18,7 +18,7 @@ defmodule Pickr.Polls do
 
   """
   def list_polls do
-    Repo.all(Poll)
+    Repo.all(Poll) |> Repo.preload(:options)
   end
 
   @doc """
