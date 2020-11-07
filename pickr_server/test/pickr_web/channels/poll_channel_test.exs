@@ -1,27 +1,34 @@
 defmodule PickrWeb.PollChannelTest do
   use PickrWeb.ChannelCase
 
+  @valid_attrs %{
+    question: "some question",
+    options: [
+      %{value: "test a"},
+      %{value: "test b"},
+      %{value: "test c"}
+    ]
+  }
+
   setup do
-    {:ok, _, socket} =
-      PickrWeb.UserSocket
-      |> socket("user_id", %{some: :assign})
-      |> subscribe_and_join(PickrWeb.PollChannel, "poll:lobby")
-
-    %{socket: socket}
+   {:ok, poll} =  Pickr.Polls.create_poll(@valid_attrs)
+   {:ok, _, socket} =
+    PickrWeb.UserSocket
+    |> socket("poll_id", %{})
+    |> subscribe_and_join(PickrWeb.PollChannel, "poll:" <> Integer.to_string(poll.id))
+    %{socket: socket, poll: poll}
   end
 
-  test "ping replies with status ok", %{socket: socket} do
-    ref = push socket, "ping", %{"hello" => "there"}
-    assert_reply ref, :ok, %{"hello" => "there"}
+  test "new vote is pushed to the client", %{socket: socket, poll: poll} do
+    result = Pickr.Polls.get_poll_results(poll.id)
+    broadcast_from! socket, "updated_result", result
+    assert_push "updated_result", result
   end
 
-  test "shout broadcasts to poll:lobby", %{socket: socket} do
-    push socket, "shout", %{"hello" => "all"}
-    assert_broadcast "shout", %{"hello" => "all"}
-  end
-
-  test "broadcasts are pushed to the client", %{socket: socket} do
-    broadcast_from! socket, "broadcast", %{"some" => "data"}
-    assert_push "broadcast", %{"some" => "data"}
+  test "new vote is broadcasted", %{socket: socket, poll: poll} do
+    id = Map.get(poll, :id)
+    push(socket, "new_vote", id)
+    _result = Pickr.Polls.get_poll_results(id)
+    assert_broadcast "updated_result", result
   end
 end

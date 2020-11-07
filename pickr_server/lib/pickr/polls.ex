@@ -9,19 +9,6 @@ defmodule Pickr.Polls do
   alias Pickr.Polls.{Poll, Vote}
 
   @doc """
-  Returns the list of polls.
-
-  ## Examples
-
-      iex> list_polls()
-      [%Poll{}, ...]
-
-  """
-  def list_polls do
-    Repo.all(Poll) |> Repo.preload(:options)
-  end
-
-  @doc """
   Gets a single poll.
 
   Raises `Ecto.NoResultsError` if the Poll does not exist.
@@ -55,53 +42,6 @@ defmodule Pickr.Polls do
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a poll.
-
-  ## Examples
-
-      iex> update_poll(poll, %{field: new_value})
-      {:ok, %Poll{}}
-
-      iex> update_poll(poll, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_poll(%Poll{} = poll, attrs) do
-    poll
-    |> Poll.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a poll.
-
-  ## Examples
-
-      iex> delete_poll(poll)
-      {:ok, %Poll{}}
-
-      iex> delete_poll(poll)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_poll(%Poll{} = poll) do
-    Repo.delete(poll)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking poll changes.
-
-  ## Examples
-
-      iex> change_poll(poll)
-      %Ecto.Changeset{data: %Poll{}}
-
-  """
-  def change_poll(%Poll{} = poll, attrs \\ %{}) do
-    Poll.changeset(poll, attrs)
-  end
-
   def cast_vote(attrs) do
     vote = Vote.cast_vote_changeset(%Vote{}, attrs)
     case vote.valid? do
@@ -116,7 +56,7 @@ defmodule Pickr.Polls do
 
             case result do
               {:ok, list} -> {:ok, list}
-              {:error, _failed_operation, _failed_value, _changes_so_far} -> {:error, :bad_request}
+              {:error, :rollback} -> {:error, :bad_request}
             end
       false -> {:error, vote}
     end

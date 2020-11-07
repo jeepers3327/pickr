@@ -6,8 +6,14 @@ defmodule Pickr.PollsTest do
   describe "polls" do
     alias Pickr.Polls.Poll
 
-    @valid_attrs %{question: "some question"}
-    @update_attrs %{question: "some updated question"}
+    @valid_attrs %{
+      question: "some question",
+      options: [
+        %{value: "test a"},
+        %{value: "test b"},
+        %{value: "test c"}
+      ]
+    }
     @invalid_attrs %{question: nil}
 
     def poll_fixture(attrs \\ %{}) do
@@ -19,14 +25,10 @@ defmodule Pickr.PollsTest do
       poll
     end
 
-    test "list_polls/0 returns all polls" do
-      poll = poll_fixture()
-      assert Polls.list_polls() == [poll]
-    end
 
     test "get_poll!/1 returns the poll with given id" do
       poll = poll_fixture()
-      assert Polls.get_poll!(poll.id) == poll
+      assert Polls.get_poll(poll.id) == poll
     end
 
     test "create_poll/1 with valid data creates a poll" do
@@ -38,27 +40,5 @@ defmodule Pickr.PollsTest do
       assert {:error, %Ecto.Changeset{}} = Polls.create_poll(@invalid_attrs)
     end
 
-    test "update_poll/2 with valid data updates the poll" do
-      poll = poll_fixture()
-      assert {:ok, %Poll{} = poll} = Polls.update_poll(poll, @update_attrs)
-      assert poll.question == "some updated question"
-    end
-
-    test "update_poll/2 with invalid data returns error changeset" do
-      poll = poll_fixture()
-      assert {:error, %Ecto.Changeset{}} = Polls.update_poll(poll, @invalid_attrs)
-      assert poll == Polls.get_poll!(poll.id)
-    end
-
-    test "delete_poll/1 deletes the poll" do
-      poll = poll_fixture()
-      assert {:ok, %Poll{}} = Polls.delete_poll(poll)
-      assert_raise Ecto.NoResultsError, fn -> Polls.get_poll!(poll.id) end
-    end
-
-    test "change_poll/1 returns a poll changeset" do
-      poll = poll_fixture()
-      assert %Ecto.Changeset{} = Polls.change_poll(poll)
-    end
   end
 end
