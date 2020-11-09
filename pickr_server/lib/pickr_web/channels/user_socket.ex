@@ -4,8 +4,6 @@ defmodule PickrWeb.UserSocket do
   ## Channels
   channel "poll:*", PickrWeb.PollChannel
 
-  transport :websocket, Phoenix.Transports.WebSocket, check_origin: ["https://pickr.vercel.app"]
-
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
   # verification, you can put default assigns into
