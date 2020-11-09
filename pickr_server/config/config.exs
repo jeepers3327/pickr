@@ -27,7 +27,7 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :cors_plug,
-  origin: ["http://localhost:8080"],
+  origin: ["https://pickr.vercel.app/"],
   max_age: 86400,
   methods: ["GET", "POST"]
 
