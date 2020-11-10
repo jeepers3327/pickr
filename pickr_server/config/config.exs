@@ -12,7 +12,7 @@ config :pickr,
 
 # Configures the endpoint
 config :pickr, PickrWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "https://open-peaceful-springtail.gigalixirapp.com"],
   secret_key_base: "AkFVVPHEsfwCRP/41yWqTL9U6JEEduRJT5/JXCVjwwvRZ+9PvUBqQ24kxMpDyLSl",
   render_errors: [view: PickrWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Pickr.PubSub,

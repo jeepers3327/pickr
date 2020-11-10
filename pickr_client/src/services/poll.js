@@ -1,6 +1,8 @@
+const API_URL = process.env.VUE_APP_API_URL
+
 export const createPoll = (formData) => {
   return new Promise((resolve, reject) => {
-    fetch("http://localhost:4000/api/polls", {
+    fetch(`${API_URL}/polls`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -18,7 +20,7 @@ export const createPoll = (formData) => {
 
 export const fetchPollResult = (id) => {
   return new Promise((resolve, reject) => {
-    fetch(`http://localhost:4000/api/polls/${id}/results`).then((result) => {
+    fetch(`${API_URL}/polls/${id}/results`).then((result) => {
       if (result.status === 400) {
         return reject("Invalid route!");
       } else if (result.status === 404) {
@@ -31,7 +33,7 @@ export const fetchPollResult = (id) => {
 
 export const fetchPoll = (id) => {
   return new Promise((resolve, reject) => {
-    fetch(`http://localhost:4000/api/polls/${id}`).then((result) => {
+    fetch(`${API_URL}/polls/${id}`).then((result) => {
       if (result.status === 400) {
         return reject("Invalid route!");
       } else if (result.status === 404) {
@@ -57,7 +59,7 @@ export const getVoterIp = () => {
 
 export const castVote = (id, formData) => {
   return new Promise((resolve, reject) => {
-    fetch(`http://localhost:4000/api/polls/${id}/vote`, {
+    fetch(`${API_URL}/polls/${id}/vote`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +78,7 @@ export const castVote = (id, formData) => {
 
 export const checkVoteExist = (id, ip) => {
   return new Promise((resolve, reject) => {
-    fetch(`http://localhost:4000/api/polls/${id}/vote_check?ip=${ip}`).then((result) => {
+    fetch(`${API_URL}/polls/${id}/vote_check?ip=${ip}`).then((result) => {
       if (result.status === 400) {
         return reject("Invalid route!");
       } else if (result.status === 404) {
