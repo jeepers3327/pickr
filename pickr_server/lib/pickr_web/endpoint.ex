@@ -13,7 +13,7 @@ defmodule PickrWeb.Endpoint do
   socket "/socket", PickrWeb.UserSocket,
     websocket: true,
     longpoll: false,
-    check_origin: ["https://pickr.vercel.app/", "//pickr.vercel.app/"]
+    check_origin: false
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
