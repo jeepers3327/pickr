@@ -12,7 +12,7 @@ config :pickr,
 
 # Configures the endpoint
 config :pickr, PickrWeb.Endpoint,
-  url: [host: "https://open-peaceful-springtail.gigalixirapp.com"],
+  url: [host: "localhost"],
   secret_key_base: "AkFVVPHEsfwCRP/41yWqTL9U6JEEduRJT5/JXCVjwwvRZ+9PvUBqQ24kxMpDyLSl",
   render_errors: [view: PickrWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Pickr.PubSub,
@@ -27,7 +27,7 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 config :cors_plug,
-  origin: ["https://pickr.vercel.app"],
+  origin: ["https://pickr.vercel.app", "http://localhost:4000"],
   max_age: 86400,
   methods: ["GET", "POST"]
 
